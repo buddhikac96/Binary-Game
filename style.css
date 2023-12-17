@@ -1,0 +1,16 @@
+body {
+  font-family: sans-serif;
+  font-size: 0.9em;
+}
+
+#feedback {
+  font-size: 0.8em;
+}
+
+#feedback.wrong {
+  color: red;
+}
+
+.card-body {
+  padding: 20px;
+}
