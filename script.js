@@ -1,50 +1,64 @@
-const decimalNumberElement = document.getElementById('decimal-number');
-const binaryInputElement = document.getElementById('binary-input');
-const feedbackElement = document.getElementById('feedback');
-const checkButton = document.getElementById('check-button');
-const generateButton = document.getElementById('generate-button');
-
+// Generate a random decimal number between 1 and 255
 function generateDecimalNumber() {
-  return Math.floor(Math.random() * 255); // Generate random decimal number between 0 and 255
+    return Math.floor(Math.random() * 255) + 1;
 }
 
-function generateBinaryNumber(decimalNumber) {
-  let binaryString = '';
-  while (decimalNumber > 0) {
-    binaryString = (decimalNumber % 2) + binaryString;
-    decimalNumber = Math.floor(decimalNumber / 2);
-  }
-  return binaryString;
+// Convert decimal number to binary string
+function convertToBinary(decimalNumber) {
+    let binaryString = "";
+    while (decimalNumber > 0) {
+        binaryString = (decimalNumber % 2) + binaryString;
+        decimalNumber = Math.floor(decimalNumber / 2);
+    }
+    return binaryString;
 }
 
+// Update decimal and binary numbers
+function updateNumbers() {
+    const decimalNumber = generateDecimalNumber();
+    const binaryString = convertToBinary(decimalNumber);
+    document.getElementById("decimal-number").textContent = decimalNumber;
+    document.getElementById("binary-input").value = "";
+}
+
+// Check user input against actual binary answer
 function checkAnswer() {
-  const userAnswer = binaryInputElement.value;
-  const correctAnswer = generateBinaryNumber(parseInt(decimalNumberElement.textContent));
+    const userBinaryInput = document.getElementById("binary-input").value;
+    const actualBinaryAnswer = convertToBinary(document.getElementById("decimal-number").textContent);
+    const feedbackElement = document.getElementById("feedback");
 
-  if (userAnswer === correctAnswer) {
-    feedbackElement.textContent = 'Correct!';
-    feedbackElement.classList.remove('alert-danger'); // Remove any previous error
-    feedbackElement.classList.add('alert-success'); // Add success class
-  } else {
-    feedbackElement.textContent = `Wrong! Correct answer: ${correctAnswer}`;
-    feedbackElement.classList.remove('alert-success'); // Remove any previous success
-    feedbackElement.classList.add('alert-danger'); // Add error class
-  }
-
-  binaryInputElement.value = ''; // Clear input field
+    if (userBinaryInput === actualBinaryAnswer) {
+        feedbackElement.classList.remove("alert-danger");
+        feedbackElement.classList.add("alert-success");
+        feedbackElement.textContent = "Correct!";
+    } else {
+        feedbackElement.classList.remove("alert-success");
+        feedbackElement.classList.add("alert-danger");
+        feedbackElement.textContent = `Wrong! Correct answer: ${actualBinaryAnswer}`;
+    }
 }
 
-function generateNewNumber() {
-  const decimalNumber = generateDecimalNumber();
-  const correctBinary = generateBinaryNumber(decimalNumber);
-  decimalNumberElement.textContent = decimalNumber;
-  binaryInputElement.value = '';
-  feedbackElement.textContent = '';
-  feedbackElement.classList.remove('wrong'); // Remove "wrong" class if present
-  // (store) correctBinary in a variable for use in checkAnswer
-}
+// Event listeners
+window.addEventListener("load", updateNumbers);
+document.getElementById("generate-button").addEventListener("click", updateNumbers);
+document.getElementById("check-button").addEventListener("click", checkAnswer);
 
-decimalNumberElement.textContent = generateDecimalNumber(); // Generate initial decimal number
+// Update input field with button values
+const buttons = document.querySelectorAll('.btn[data-value]');
 
-checkButton.addEventListener('click', checkAnswer);
-generateButton.addEventListener('click', generateNewNumber);
+buttons.forEach(button => {
+    button.addEventListener('click', () => {
+        const currentValue = document.getElementById('binary-input').value;
+        document.getElementById('binary-input').value = currentValue + button.dataset.value;
+    });
+});
+
+// Handle backspace button
+const backspaceButton = document.querySelector('.btn[data-action="backspace"]');
+
+backspaceButton.addEventListener('click', () => {
+    const currentValue = document.getElementById('binary-input').value;
+    if (currentValue.length > 0) {
+        document.getElementById('binary-input').value = currentValue.slice(0, -1);
+    }
+});
