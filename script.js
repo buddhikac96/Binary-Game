@@ -16,7 +16,7 @@ function convertToBinary(decimalNumber) {
 // Update decimal and binary numbers
 function updateNumbers() {
     const decimalNumber = generateDecimalNumber();
-    const binaryString = convertToBinary(decimalNumber);
+    document.getElementById("feedback").style.display = "none";
     document.getElementById("decimal-number").textContent = decimalNumber;
     document.getElementById("binary-input").value = "";
 }
@@ -26,6 +26,10 @@ function checkAnswer() {
     const userBinaryInput = document.getElementById("binary-input").value;
     const actualBinaryAnswer = convertToBinary(document.getElementById("decimal-number").textContent);
     const feedbackElement = document.getElementById("feedback");
+
+    if (feedbackElement.style.display === "none") {
+        feedbackElement.style.display = "block";
+    }
 
     if (userBinaryInput === actualBinaryAnswer) {
         feedbackElement.classList.remove("alert-danger");
