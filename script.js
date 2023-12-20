@@ -59,7 +59,7 @@ function checkAnswer() {
     } else {
         feedbackElement.classList.remove("alert-success");
         feedbackElement.classList.add("alert-danger");
-        feedbackElement.textContent = `Wrong! Correct answer: ${actualBinaryAnswer}`;
+        feedbackElement.textContent = `Wrong! Correct answer: ${actualBinaryAnswer.padStart(8, '0')}`;
     }
 }
 
