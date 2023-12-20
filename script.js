@@ -42,6 +42,9 @@ function updateNumbers() {
 
 // Check user input against actual binary answer
 function checkAnswer() {
+    // Check if a new day has started
+    isNewDay();
+
     const userBinaryInput = Array.from(document.querySelectorAll('.binary-input-field'))
         .map(input => input.value)
         .join('');
@@ -56,11 +59,44 @@ function checkAnswer() {
         feedbackElement.classList.remove("alert-danger");
         feedbackElement.classList.add("alert-success");
         feedbackElement.textContent = "Correct!";
+        var correctCount = parseInt(getLocalStorage('correctCount')) || 0;
+        setLocalStorage('correctCount', correctCount + 1);
     } else {
         feedbackElement.classList.remove("alert-success");
         feedbackElement.classList.add("alert-danger");
         feedbackElement.textContent = `Wrong! Correct answer: ${actualBinaryAnswer.padStart(8, '0')}`;
+        var wrongCount = parseInt(getLocalStorage('wrongCount')) || 0;
+        setLocalStorage('wrongCount', wrongCount + 1);
     }
+
+    // Display the counts to the user
+    document.getElementById('correctCount').textContent = getLocalStorage('correctCount');
+    document.getElementById('wrongCount').textContent = getLocalStorage('wrongCount');
+}
+
+// Function to set a value in localStorage
+function setLocalStorage(name, value) {
+    localStorage.setItem(name, value);
+}
+
+// Function to get a value from localStorage
+function getLocalStorage(name) {
+    return localStorage.getItem(name);
+}
+
+// Function to check if a new day has started
+function isNewDay() {
+    var lastDate = getLocalStorage('date');
+    var currentDate = new Date().toDateString();
+
+    if (lastDate !== currentDate) {
+        setLocalStorage('date', currentDate);
+        setLocalStorage('correctCount', 0);
+        setLocalStorage('wrongCount', 0);
+        return true;
+    }
+
+    return false;
 }
 
 // Event listeners
