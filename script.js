@@ -1,3 +1,10 @@
+// Focus on first input field when page loads
+window.onload = function () {
+    if (binaryInputs[0]) {
+        binaryInputs[0].focus();
+    }
+};
+
 // Generate a random decimal number between 1 and 255
 function generateDecimalNumber() {
     return Math.floor(Math.random() * 255) + 1;
@@ -13,17 +20,31 @@ function convertToBinary(decimalNumber) {
     return binaryString;
 }
 
+function clearBinaryInputs() {
+    const binaryInputs = document.querySelectorAll('.binary-input-field');
+    binaryInputs.forEach(input => {
+        input.value = '';
+    });
+
+    if (binaryInputs[0]) {
+        binaryInputs[0].focus();
+    }
+}
+
 // Update decimal and binary numbers
 function updateNumbers() {
     const decimalNumber = generateDecimalNumber();
     document.getElementById("feedback").style.display = "none";
     document.getElementById("decimal-number").textContent = decimalNumber;
     document.getElementById("binary-input").value = "";
+    clearBinaryInputs();
 }
 
 // Check user input against actual binary answer
 function checkAnswer() {
-    const userBinaryInput = document.getElementById("binary-input").value;
+    const userBinaryInput = Array.from(document.querySelectorAll('.binary-input-field'))
+        .map(input => input.value)
+        .join('');
     const actualBinaryAnswer = convertToBinary(document.getElementById("decimal-number").textContent);
     const feedbackElement = document.getElementById("feedback");
 
@@ -31,7 +52,7 @@ function checkAnswer() {
         feedbackElement.style.display = "block";
     }
 
-    if (userBinaryInput === actualBinaryAnswer) {
+    if (parseInt(userBinaryInput, 2) === parseInt(actualBinaryAnswer, 2)) {
         feedbackElement.classList.remove("alert-danger");
         feedbackElement.classList.add("alert-success");
         feedbackElement.textContent = "Correct!";
@@ -47,22 +68,57 @@ window.addEventListener("load", updateNumbers);
 document.getElementById("generate-button").addEventListener("click", updateNumbers);
 document.getElementById("check-button").addEventListener("click", checkAnswer);
 
-// Update input field with button values
-const buttons = document.querySelectorAll('.btn[data-value]');
+let lastFocusedInput = null;
 
-buttons.forEach(button => {
-    button.addEventListener('click', () => {
-        const currentValue = document.getElementById('binary-input').value;
-        document.getElementById('binary-input').value = currentValue + button.dataset.value;
+// Get all the binary input fields
+const binaryInputs = document.querySelectorAll('.binary-input-field');
+binaryInputs.forEach((input, index) => {
+    input.addEventListener('focus', () => {
+        lastFocusedInput = input;
     });
 });
 
-// Handle backspace button
-const backspaceButton = document.querySelector('.btn[data-action="backspace"]');
+// Get all the binary buttons
+const binaryButtons = document.querySelectorAll('.binaryButton');
+binaryButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        if (lastFocusedInput) {
+            // Set the value of the last focused input box
+            lastFocusedInput.value = button.dataset.value;
+            // Get the index of the last focused input box
+            const focusedIndex = Array.from(binaryInputs).indexOf(lastFocusedInput);
+            // If there's a next input box, focus it
+            if (binaryInputs[focusedIndex + 1]) {
+                binaryInputs[focusedIndex + 1].focus();
+            } else {
+                // If there's no next input box, focus the first one
+                binaryInputs[0].focus();
+            }
+        }
+    });
+});
 
-backspaceButton.addEventListener('click', () => {
-    const currentValue = document.getElementById('binary-input').value;
-    if (currentValue.length > 0) {
-        document.getElementById('binary-input').value = currentValue.slice(0, -1);
+// Get all the binary input fields
+//const binaryInputs = document.querySelectorAll('.binary-input-field');
+
+// Add an input event listener to each field
+binaryInputs.forEach((input, index) => {
+    input.addEventListener('input', () => {
+        // If there's a next input field, focus it
+        if (binaryInputs[index + 1]) {
+            binaryInputs[index + 1].focus();
+        }
+    });
+});
+
+// Handle clear button
+const clearButton = document.getElementById('clearButton');
+clearButton.addEventListener('click', () => {
+    binaryInputs.forEach(input => {
+        input.value = '';
+    });
+
+    if (binaryInputs[0]) {
+        binaryInputs[0].focus();
     }
 });

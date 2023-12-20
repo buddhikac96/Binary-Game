@@ -14,3 +14,16 @@ body {
 .card-body {
   padding: 20px;
 }
+
+.binary-input-field {
+  width: 12%;
+  text-align: center;
+}
+
+.binary-input-label {
+  color: grey;
+  font-size: 0.8rem;
+  width: 12%;
+  display: block;
+  margin-bottom: -10px;
+}
